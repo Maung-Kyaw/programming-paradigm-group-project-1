@@ -1,43 +1,49 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package project_1;
+package Project1_6581147;
 
-/**
- *
- * @author kyawz
- */
+import java.util.*;
+
 public class Customer {
-    private String name;
+    private String customerName;
     private int points;
     
     public Customer(String name){
-        this.name=name;
+        this.customerName=name;
         this.points=0;
     }
-    //Getters
     public String getName(){
-        return name;
+        return customerName;
     }
     public int getPoints(){
         return points;
     }
-    
     public void addPoints(double orderTotal){
-        points += (int)(orderTotal/500);
+        points+=(int)(orderTotal/500);
     }
-    
     public double redeemPoints(double orderTotal){
         if(points>=100){
-            points -= 100;
-            return orderTotal * 0.95;
+            points-=100;
+            return orderTotal*0.95;
         }
-        return orderTotal; // No discount, no enough points
+        return orderTotal;
     }
-    
-    public String toString(){
-        return name+" -Points: "+points;
+    public static HashMap<String, Customer> customerMap(HashMap<Integer, Order> orderMap, HashMap<String, Product> productMap) {
+        HashMap<String, Customer> customerMap = new HashMap<>();
+
+        for (Order order : orderMap.values()) {
+            Product product = productMap.get(order.getCode());
+            if (product != null) {
+                double orderTotal = order.calculateSubTotal1(productMap); 
+                String customerName = order.getCustomerName();
+
+                if (!customerMap.containsKey(customerName)) {
+                    customerMap.put(customerName, new Customer(customerName));
+                }
+                
+                Customer customer = customerMap.get(customerName);
+                customer.addPoints(orderTotal); 
+            }
+        }
+
+        return customerMap;
     }
-    
 }
