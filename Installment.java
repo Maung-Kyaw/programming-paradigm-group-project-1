@@ -26,38 +26,48 @@ public class Installment {
     }
     public static HashMap<Integer, Installment> readInstallments() {
         HashMap<Integer, Installment> installmentMap = new HashMap<>();
+        Scanner userInput= new Scanner(System.in);
+        String fileName="installment.txt";
+        File InFile=null;
         
-        try {
-            File installmentFile = new File("src/main/java/Project1_6581147/installments.txt");
-            Scanner installmentScan = new Scanner(installmentFile);
+        while(true){
+        
+            try {
+                File installmenttxt = new File("src/main/java/Project1_6581147/"+fileName);
+                Scanner installmentScan = new Scanner(installmenttxt);
+
+                if (installmentScan.hasNextLine()) installmentScan.nextLine();
             
-            if (installmentScan.hasNextLine()) installmentScan.nextLine();
-            
-            while (installmentScan.hasNextLine()) {
-                String line = installmentScan.nextLine();
-                String[] cols = line.split(",");
+                while (installmentScan.hasNextLine()) {
+                    String line = installmentScan.nextLine();
+                    try{
+                    String[] cols = line.split(",");
                 
-                int months = Integer.parseInt(cols[0].trim());
-                double interestRate = Double.parseDouble(cols[1].trim());
+                    int months = Integer.parseInt(cols[0].trim());
+                    double interestRate = Double.parseDouble(cols[1].trim());
                 
-                installmentMap.put(months, new Installment(months, interestRate));
+                    installmentMap.put(months, new Installment(months, interestRate));
+                    }
+                    catch(NumberFormatException | ArrayIndexOutOfBoundsException e){
+                        System.out.println(e.getClass().getName()+": "+e.getMessage());
+                        System.out.println(line);
+                        System.out.println();
+                    }
+                }
+                break;
+            } 
+            catch (FileNotFoundException e) {
+                System.err.println(e);
+                System.out.println("New file name:");
+                fileName=userInput.next();
             }
-            installmentScan.close();
-        } 
-        catch (FileNotFoundException e) {
-            System.err.println("Installment file not found");
-        } 
-        catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("Array index error while reading installment file");
-        } 
-        catch (NumberFormatException e) {
-            System.err.println("Error parsing numbers in installment file");
         }
+        
+        
         return installmentMap;
     }
     public void displayInstallment(){
-        System.out.printf("Months: %23d\n", months);
-        System.out.printf("Interest Rate: %.1f\n\n", interestRate);
+        System.out.printf("%2d-month plan   monthly interest= %.2f \n", months,interestRate);
     }
     
 }
