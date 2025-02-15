@@ -18,7 +18,6 @@ public class Product {
     private int totalUnits=0;
     private double totalSales=0;
     
-    //Constructor for setting the values
     public Product(String code, String name, double price){
         this.productCode=code;
         this.productName=name;
@@ -26,28 +25,43 @@ public class Product {
     }
     public static HashMap<String, Product> readProduct(){
         HashMap<String,Product> productMap= new HashMap<>();
-        try{
-            File producttxt=new File("src/main/java/Project1_6581147/products.txt");
-            Scanner productScan= new Scanner(producttxt);
-            if(productScan.hasNextLine()) productScan.nextLine();
+        Scanner userInput= new Scanner(System.in);
+        Scanner productScan=null;
+        String fileName="product.txt";
+        
+        File InFile=null;
+
+        while(productScan==null){
+            try{
             
-            while(productScan.hasNextLine()){
-                String line= productScan.nextLine();
-                String [] cols=line.split(",");
-                String code= cols[0].trim();
-                String name= cols[1].trim();
-                double unitPrice= Double.parseDouble(cols[2].trim());
+                File producttxt=new File("src/main/java/Project1_6581147/"+fileName);
+                productScan= new Scanner(producttxt);
+               
+                if(productScan.hasNextLine()) productScan.nextLine();
+            
+                while(productScan.hasNextLine()){
+                    String line= productScan.nextLine();
+                    try{
+                    String [] cols=line.split(",");
+                    String code= cols[0].trim();
+                    String name= cols[1].trim();
+                    double unitPrice= Double.parseDouble(cols[2].trim());
 
-                productMap.put(code, new Product(code, name, unitPrice));
-
+                    productMap.put(code, new Product(code, name, unitPrice));
+                    }
+                    catch(NumberFormatException | ArrayIndexOutOfBoundsException e){
+                        System.out.println(e.getClass().getName()+e.getMessage());
+                        System.out.println(line);
+                        System.out.println();
+                    }
+                }
+                productScan.close();
             }
-            productScan.close();
-        }
-        catch(FileNotFoundException e){
-            System.err.println("Product file not found");
-        }
-        catch(ArrayIndexOutOfBoundsException e){
-            System.err.println("Array index error");
+            catch(FileNotFoundException e){
+                System.err.println(e);
+                System.out.println("New file name:");
+                fileName=userInput.next();
+            }
         }
         return productMap;
     } 
@@ -66,16 +80,13 @@ public class Product {
     }
     
     public void getSalesSummary(HashMap<Integer, Order> orderMap) {
-        System.out.println(productName + "\ttotal sales = " + totalSales + 
-                           "  units = " + totalUnits + " THB" +
-                           "  lucky draw winner = " + generateWinner(orderMap));
+        
+        System.out.printf("%-16s total sales= %d units %,13.2f THB    lucky draw winner= %s\n",productName,totalUnits,totalSales,generateWinner(orderMap));
     }
 
-    // Method to generate a lucky draw winner from product orders
     private String generateWinner(HashMap<Integer, Order> orderMap) {
         List<Order> productOrders = new ArrayList<>();
 
-        // Collect all orders related to this product
         for (Order order : orderMap.values()) {
             if (order.getCode().equals(this.productCode)) {
                 productOrders.add(order);
@@ -86,11 +97,10 @@ public class Product {
             return "No winner (No orders)";
         }
 
-        // Randomly select a winner from the list of orders
         Random rand = new Random();
         Order luckyOrder = productOrders.get(rand.nextInt(productOrders.size()));
 
-        return "Order ID: " + luckyOrder.getorderId() + ", Customer: " + luckyOrder.getCustomerName();
+        return luckyOrder.getCustomerName()+" (order "+luckyOrder.getorderId()+")";
     }
 
     public void displayProduct(){
@@ -99,7 +109,7 @@ public class Product {
         System.out.println("Product Code: " + productCode);
         System.out.println("Unit Price: " + unitPrice);
         System.out.println("==================================");
-
+        System.out.println();
     }
     
 }
