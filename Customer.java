@@ -19,12 +19,9 @@ public class Customer {
     public void addPoints(double orderTotal){
         points+=(int)(orderTotal/500);
     }
-    public double redeemPoints(double orderTotal){
-        if(points>=100){
-            points-=100;
-            return orderTotal*0.95;
-        }
-        return orderTotal;
+    public void redeemPoints(){
+        if(points >= 100)
+            points -= 100;  
     }
     public static HashMap<String, Customer> customerMap(HashMap<Integer, Order> orderMap, HashMap<String, Product> productMap) {
         HashMap<String, Customer> customerMap = new HashMap<>();
