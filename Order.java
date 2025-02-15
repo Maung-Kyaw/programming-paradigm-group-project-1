@@ -40,18 +40,20 @@ public class Order {
     public int getUnit(){
         return units;
     }
-    public static HashMap<Integer,Order> readOrder(){
+    public static HashMap<Integer,Order> readOrder(HashMap<String,String> fileNames){
         HashMap<Integer,Order> orderMap= new HashMap<>();
-        HashMap<String, Product> productMap = Product.readProduct();
-        HashMap<Integer, Installment> installmentMap = Installment.readInstallments();
+        HashMap<String, Product> productMap = Product.readProduct(fileNames);
+        HashMap<Integer, Installment> installmentMap = Installment.readInstallments(fileNames);
         Scanner userInput= new Scanner(System.in);
-        String fileName="orders.txt";
-        File InFile=null;
+        String fileName = fileNames.getOrDefault("order", "order.txt");
+        //String fileName="orders_errors.txt";
+        Scanner orderScan=null;
+    
         
-        while(true){
+        while(orderScan==null){
             try{
                 File orderstxt=new File("src/main/java/Project1_6581147/"+fileName);
-                Scanner orderScan= new Scanner(orderstxt);
+                orderScan= new Scanner(orderstxt);
 
                 if(orderScan.hasNextLine()) orderScan.nextLine();
             
@@ -83,12 +85,16 @@ public class Order {
                         System.out.println();
                     }
                 }
+                orderScan.close();
+                fileNames.put("order", fileName);
                 break;
             }
             catch(FileNotFoundException e){
-            System.err.println(e);
-            System.out.println("New file name:");
-            fileName=userInput.next();
+                System.err.println(e);
+                System.out.println("New file name:");
+                fileName=userInput.next();
+                fileNames.put("order", fileName);
+                System.out.println();
             }
         }
         return orderMap;
