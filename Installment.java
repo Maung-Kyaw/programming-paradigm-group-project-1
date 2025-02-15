@@ -24,17 +24,18 @@ public class Installment {
         if(months==0) return 0;
         return calculateTotalPayment(subTotal)/months;
     }
-    public static HashMap<Integer, Installment> readInstallments() {
+    public static HashMap<Integer, Installment> readInstallments(HashMap<String,String> fileNames) {
         HashMap<Integer, Installment> installmentMap = new HashMap<>();
         Scanner userInput= new Scanner(System.in);
-        String fileName="installment.txt";
-        File InFile=null;
+        String fileName = fileNames.getOrDefault("installment", "installment.txt");
+        //String fileName="installments.txt";
+        Scanner installmentScan=null;
         
-        while(true){
+        while(installmentScan==null){
         
             try {
                 File installmenttxt = new File("src/main/java/Project1_6581147/"+fileName);
-                Scanner installmentScan = new Scanner(installmenttxt);
+                installmentScan = new Scanner(installmenttxt);
 
                 if (installmentScan.hasNextLine()) installmentScan.nextLine();
             
@@ -54,12 +55,16 @@ public class Installment {
                         System.out.println();
                     }
                 }
+                installmentScan.close();
+                fileNames.put("installment", fileName);
                 break;
             } 
             catch (FileNotFoundException e) {
                 System.err.println(e);
                 System.out.println("New file name:");
                 fileName=userInput.next();
+                fileNames.put("installment", fileName);
+                System.out.println();
             }
         }
         
