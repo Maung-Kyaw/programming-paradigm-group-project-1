@@ -23,11 +23,15 @@ public class Product {
         this.productName=name;
         this.unitPrice=price;
     }
-    public static HashMap<String, Product> readProduct(){
+    public int getTotalUnits() {
+        return totalUnits;
+    }
+    public static HashMap<String, Product> readProduct(HashMap<String,String> fileNames){
         HashMap<String,Product> productMap= new HashMap<>();
         Scanner userInput= new Scanner(System.in);
         Scanner productScan=null;
-        String fileName="product.txt";
+        //String fileName="product.txt";
+        String fileName = fileNames.getOrDefault("product", "product.txt");
         
         File InFile=null;
 
@@ -56,11 +60,15 @@ public class Product {
                     }
                 }
                 productScan.close();
+                fileNames.put("product", fileName);
+                break;
             }
             catch(FileNotFoundException e){
                 System.err.println(e);
                 System.out.println("New file name:");
                 fileName=userInput.next();
+                fileNames.put("product", fileName);
+                System.out.println();
             }
         }
         return productMap;
@@ -104,12 +112,8 @@ public class Product {
     }
 
     public void displayProduct(){
-        System.out.println("==================================");
-        System.out.println("Product Name: " + productName);
-        System.out.println("Product Code: " + productCode);
-        System.out.println("Unit Price: " + unitPrice);
-        System.out.println("==================================");
-        System.out.println();
+        System.out.printf("%-16s (%s)   unit price= %,9.2f\n",productName,productCode,unitPrice);
+
     }
     
 }
