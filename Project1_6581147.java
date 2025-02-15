@@ -11,18 +11,20 @@ class InvalidInputException extends Exception{
 
 public class Project1_6581147 {
     public static void main(String[] args) {
-        HashMap<String,Product> productMap= Product.readProduct();
+        HashMap<String, String> fileNames = new HashMap<>();
+        HashMap<String,Product> productMap= Product.readProduct(fileNames);
         for (Product product : productMap.values()) {
             product.displayProduct();
         }
+        System.out.println();
         
-        HashMap<Integer, Installment> installmentMap= Installment.readInstallments();
+        HashMap<Integer, Installment> installmentMap= Installment.readInstallments(fileNames);
         for(Installment installment : installmentMap.values()){
             installment.displayInstallment();
         }
         System.out.println();
         
-        HashMap<Integer, Order> orderMap= Order.readOrder();
+        HashMap<Integer, Order> orderMap= Order.readOrder(fileNames);
         
         for (Order order : orderMap.values()) {
             order.displayOrder(productMap);
@@ -35,9 +37,12 @@ public class Project1_6581147 {
         System.out.println();
         
         System.out.println("=== Product Summary ===");
-        for (Product product : productMap.values()) {
-            product.getSalesSummary(orderMap);   
-            
+        List<Product> productList = new ArrayList<>(productMap.values());
+
+        productList.sort((p1, p2) -> Integer.compare(p2.getTotalUnits(), p1.getTotalUnits()));
+
+        for (Product product : productList) {
+            product.getSalesSummary(orderMap);
         }
         
         Order.customerSummary(customerMap);
